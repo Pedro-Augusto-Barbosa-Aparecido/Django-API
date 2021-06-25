@@ -20,20 +20,20 @@ class VehicleCreateView(View):
                 self.model.validate_type_vehicle(self.model, vehicle_type=type_vehicle):
             obj = self.model.objects.create(branch=branch, type_vehicle=type_vehicle)
 
-            if Vehicle.validate_obj(obj.branch, obj.type_vehicle):
-                obj.save()
+            # if Vehicle.validate_obj(obj.branch, obj.type_vehicle):
+            #     obj.save()
 
         if obj:
             qs = self.model.objects.filter()
-            self.content.results = []
-            self.content.count_obj = qs.count()
+            self.content['results'] = []
+            self.content['count_obj'] = qs.count()
             for _obj in qs:
-                self.content.results.append({
+                self.content['results'].append({
                     'branch': _obj.branch,
                     'type_vehicle': _obj.type_vehicle
                 })
         else:
-            self.content.count_obj = 0
+            self.content['count_obj'] = 0
 
         return JsonResponse(
             data=self.content,
@@ -57,7 +57,9 @@ class ProductCreateView(View):
         branch = request.GET.get("branch", None)
         type_vehicle = request.GET.get("type_vehicle", None)
 
-        if self.model.validate_price(price) and self.model.validate_name(name) and self.model.validate_model(model) and self.model.validate_color(color) and self.model.validate_description(description):
+        if self.model.validate_price(price) and self.model.validate_name(name) \
+                and self.model.validate_model(model) and \
+                self.model.validate_color(color) and self.model.validate_description(description):
             obj = self.model.objects.create(
                 price=price,
                 name=name,
@@ -72,11 +74,11 @@ class ProductCreateView(View):
         if obj:
             obj.save()
             qs = self.model.objects.all()
-            self.content.results = []
-            self.content.count = self.model.objects.all().count()
+            self.content['results'] = []
+            self.content['count'] = self.model.objects.all().count()
 
             for _obj in qs:
-                self.content.results.append({
+                self.content['results'].append({
                     "vehicle": {
                         "branch": _obj.vehicle.branch,
                         "type_vehicle": _obj.vehicle.type_vehicle
@@ -90,7 +92,7 @@ class ProductCreateView(View):
                     "slab": _obj.slab
                 })
         else:
-            self.content.count = 0
+            self.content['count'] = 0
 
         return JsonResponse(
             data=self.content,
