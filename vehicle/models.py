@@ -99,3 +99,17 @@ class Product(Model):
                 return True
 
         return False
+
+    @property
+    def attributes(self):
+        return {
+            "branch": self.branch,
+            "name": self.name,
+            "model": self.model,
+            "description": self.description,
+            "color": self.color,
+            "price": self.price,
+            "chassis": self.chassis,
+            "slab": self.slab,
+            "id": self.pk
+        }
