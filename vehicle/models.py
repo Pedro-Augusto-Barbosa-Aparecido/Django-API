@@ -4,18 +4,13 @@ from django.db.models import Model
 # Create your models here
 
 
-class Vehicle(Model):
-
-    CAR = "CAR"
-    TRUCK = "CAM"
-    MOTO = "MOT"
-    CAMINHONETE = "CRM"
-
-    __TYPE_VEHICLES = (
-        "Carro",
-        "Caminhão",
-        "Moto",
-         "Caminhonete",
+class Product(Model):
+    __COLORS = (
+        "Vermelho",
+        "Amarelo",
+        "Verde",
+        "Cinza",
+        "Preto"
     )
 
     __BRANCH_POSSIBLES = (
@@ -30,57 +25,6 @@ class Vehicle(Model):
         'THERMOSUL', 'NOMAQ', 'FACHIN'
     )
 
-    branch = models.CharField(max_length=40, blank=False, null=False)
-    type_vehicle = models.CharField(max_length=3, blank=False, null=False)
-
-    class Meta:
-        ordering = ("branch", )
-        verbose_name = "Veículo"
-        verbose_name_plural = "Veículos"
-
-    def __str__(self):
-        return f"{self.branch} - {self.type_vehicle}"
-
-    @staticmethod
-    def validate_branch(self, branch=None):
-        if not branch or (type(branch) is not str):
-            raise ValueError("Branch invalid!")
-
-        for _branch in self.__BRANCH_POSSIBLES:
-            if branch.upper() == _branch:
-                return True
-
-        return False
-
-    @staticmethod
-    def validate_type_vehicle(self, vehicle_type=None):
-        if not vehicle_type or (type(vehicle_type) is not str):
-            raise ValueError(f'{vehicle_type} is a vehicle invalid!')
-
-        for type_vehicle in self.__TYPE_VEHICLES:
-            if vehicle_type.capitalize() == type_vehicle:
-                return True
-
-        return False
-
-    @classmethod
-    def validate_obj(cls, obj_branch, obj_type):
-        if cls.objects.filter(branch=obj_branch, type_vehicle=obj_type):
-            raise Exception(f'The object with branch: {obj_branch} and type: {obj_type}, already exist!')
-        else:
-            return True
-
-
-class Product(Model):
-    COLORS = (
-        "Vermelho",
-        "Amarelo",
-        "Verde",
-        "Cinza",
-        "Preto"
-    )
-
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT,)
     price = models.CharField(max_length=255, blank=False, null=False)
     name = models.CharField(max_length=20, blank=False, null=False)
     model = models.CharField(max_length=30, blank=False, null=False)
@@ -88,6 +32,7 @@ class Product(Model):
     slab = models.CharField(max_length=9, blank=False, null=False)
     chassis = models.CharField(max_length=20, blank=False, null=False)
     description = models.CharField(max_length=300, blank=True, null=True)
+    branch = models.CharField(max_length=40, blank=False, null=False)
 
     class Meta:
         ordering = ("name", )
@@ -95,7 +40,7 @@ class Product(Model):
         verbose_name_plural = "Produtos"
 
     def __str__(self):
-        return f'{self.name} - Marca: {self.vehicle.branch} - Modelo: {self.model}'
+        return f'{self.name} - Marca: {self.branch} - Modelo: {self.model}'
 
     @staticmethod
     def validate_price(price=None):
@@ -131,7 +76,7 @@ class Product(Model):
         if not color or (type(color) is not str):
             raise ValueError(f"The color {color} is invalid!")
 
-        for cor in Product.COLORS:
+        for cor in Product.__COLORS:
             if cor == color:
                 return True
 
@@ -143,3 +88,14 @@ class Product(Model):
             raise ValueError(f"The description {description} is invalid!")
 
         return True
+
+    @staticmethod
+    def validate_branch(branch=None):
+        if not branch or (type(branch) is not str):
+            raise ValueError("Branch invalid!")
+
+        for _branch in Product.__BRANCH_POSSIBLES:
+            if branch.upper() == _branch:
+                return True
+
+        return False
