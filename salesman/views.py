@@ -1,6 +1,6 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import View
-from models import Salesman, Sell
+from salesman.models import Salesman, Sell
 from vehicle.models import Product
 
 
@@ -29,9 +29,8 @@ class SalesmanDetailView(View):
 
     def get(self, request, pk):
         return JsonResponse(
-            data={
-                Salesman.objects.filter(pk=pk)[0].attribute
-            }, status=200)
+            data=Salesman.objects.filter(pk=pk)[0].attribute
+            , status=200)
 
 
 class SalesmanDeleteView(View):
@@ -55,18 +54,23 @@ class SalesmanListView(View):
             }, status=200)
 
 
+# noinspection PyArgumentList
 class SellCreateView(View):
     def post(self, request):
         product_pk = request.GET.get("product_pk", None)
         salesman_pk = request.GET.get("salesman_pk", None)
         quantity = request.GET.get("quantity", 1)
-        price = request.GET.get("price", None)
 
-        if not product_pk and not salesman_pk and not price:
+        if product_pk and salesman_pk:
+            price = Product.objects.filter(pk=product_pk)[0].price
+
+            price = Sell.get_price(price)
+            fn_price = price * float(quantity)
+
             sell = Sell.objects.create(
                 product=Product.objects.filter(pk=product_pk)[0],
-                salesman=Salesman.objects.filter(pk=salesman_pk),
-                finally_price=Sell.get_price(price) * quantity,
+                salesman=Salesman.objects.filter(pk=salesman_pk)[0],
+                finally_price=fn_price,
                 quantity=quantity
             )
 

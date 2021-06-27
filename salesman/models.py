@@ -27,12 +27,7 @@ class Salesman(Model):
 class Sell(Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
 
-    quantity = models.DecimalField(
-        verbose_name="Quantidade solicitada desse produto",
-        name="quantidade",
-        max_digits=5,
-        decimal_places=2
-    )
+    quantity = models.CharField(max_length=10, blank=False, null=True, verbose_name="Quantidade")
 
     finally_price = models.CharField(max_length=255, blank=True, null=True, default='R$ 00,00')
     salesman = models.ForeignKey(Salesman, on_delete=models.PROTECT)
@@ -45,8 +40,10 @@ class Sell(Model):
     def __str__(self):
         return f'{self.product.name}, vendido pelo {self.salesman.name}'
 
-    def get_price(self, price):
+    @staticmethod
+    def get_price(price):
         price = price[price.find('$') + 2:]
+        price = price.replace(',', '.')
         return float(price)
 
     @property
