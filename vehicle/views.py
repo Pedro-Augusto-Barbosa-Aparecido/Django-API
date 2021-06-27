@@ -1,5 +1,6 @@
 from vehicle.models import Product
 from django.views import View
+from django.db.models import F
 from django.http import HttpResponse, JsonResponse, Http404
 
 import json
@@ -196,33 +197,44 @@ class ProductUpdateView(View):
         s = True if slab else False
         e = True if chassis else False
 
+        update_fields = []
+
         if pk is None:
             return Http404("Error")
 
         if pk != 0:
             obj = self.model.objects.filter(pk=pk)
-            obj = obj[0]
+
+            Product.objects.filter(pk=pk)
 
             if p:
-                obj.update(name=name)
+                obj[0].price = price
+                update_fields.append('price')
             if n:
-                obj.update(price=price)
+                obj[0].name = name
+                update_fields.append('name')
             if m:
-                obj.update(model=model)
+                obj[0].model = model
+                update_fields.append('model')
             if c:
-                obj.update(color=color)
+                obj[0].color = color
+                update_fields.append('color')
             if d:
-                obj.update(description=description)
+                obj[0].description = description
+                update_fields.append('description')
             if b:
-                obj.update(branch=branch)
+                obj[0].branch = branch
+                update_fields.append('branch')
             if s:
-                obj.update(slab=slab)
+                obj[0].slab = slab
+                update_fields.append('slab')
             if e:
-                obj.update(chassis=chassis)
+                obj[0].chassis = chassis
+                update_fields.append('chassis')
 
-            obj.save()
+            obj[0].save(update_fields=update_fields, force_update=True)
 
-            self.content['results'] = [obj.attributes]
+            self.content['results'] = [obj[0].attributes]
             self.content['count'] = 1
 
             return JsonResponse(
