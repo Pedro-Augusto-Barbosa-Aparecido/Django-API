@@ -7,8 +7,6 @@ from vehicle.models import Product
 
 class Salesman(Model):
     name = models.CharField(max_length=30)
-    sells = models.CharField(max_length=255, blank=True, null=True, default='R$ 00,00')
-    sells_numbers = models.CharField(max_length=12, blank=True, null=True, default='0')
 
     class Meta:
         ordering = ("name",)
@@ -17,6 +15,13 @@ class Salesman(Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def attribute(self):
+        return {
+            "name": self.name,
+            "id": self.pk
+        }
 
 
 class Sell(Model):
@@ -39,3 +44,16 @@ class Sell(Model):
 
     def __str__(self):
         return f'{self.product.name}, vendido pelo {self.salesman.name}'
+
+    def get_price(self, price):
+        price = price[price.find('$') + 2:]
+        return float(price)
+
+    @property
+    def attribute(self):
+        return {
+            "product": self.product.attributes,
+            "salesman": self.salesman.attribute,
+            "quantity": self.quantity,
+            "finally_price": self.finally_price
+        }
