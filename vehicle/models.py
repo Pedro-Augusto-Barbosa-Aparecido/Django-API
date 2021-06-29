@@ -28,7 +28,7 @@ class Product(Model):
     price = models.CharField(max_length=255, blank=False, null=False)
     name = models.CharField(max_length=20, blank=False, null=False)
     model = models.CharField(max_length=30, blank=False, null=False)
-    color = models.CharField(max_length=3, blank=False, null=False)
+    color = models.CharField(max_length=10, blank=False, null=False)
     slab = models.CharField(max_length=9, blank=False, null=False)
     chassis = models.CharField(max_length=20, blank=False, null=False)
     description = models.CharField(max_length=300, blank=True, null=True)

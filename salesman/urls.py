@@ -1,7 +1,6 @@
 from django.urls import path
 from salesman.views import SalesmanListView, SalesmanCreateView, SalesmanDeleteView, SalesmanDetailView, SellListView, \
-    SellCreateView, SellDetailView
-
+    SellCreateView, SellDetailView, SellListViewBySalesman
 
 urlpatterns = [
     path("salesman/", SalesmanListView.as_view(), name="list-salesman"),
@@ -11,4 +10,5 @@ urlpatterns = [
     path("sell/", SellListView.as_view(), name="list-sell"),
     path("sell/create/", SellCreateView.as_view(), name="create-sell"),
     path("sell/detail/<int:pk>", SellDetailView.as_view(), name="detail-sell"),
+    path("sell/list-by-salesman/<int:pk>", SellListViewBySalesman.as_view(), name="list-by-salesman-sell"),
 ]

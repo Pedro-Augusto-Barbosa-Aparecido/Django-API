@@ -54,7 +54,6 @@ class SalesmanListView(View):
             }, status=200)
 
 
-# noinspection PyArgumentList
 class SellCreateView(View):
     def post(self, request):
         product_pk = request.GET.get("product_pk", None)
@@ -100,3 +99,19 @@ class SellListView(View):
             "results": [obj.attribute for obj in qs],
             "count": qs.count()
         }, status=200)
+
+
+class SellListViewBySalesman(View):
+    def get(self, request, pk):
+        if pk:
+            qs = Sell.objects.filter(salesman_id=pk)
+
+            return JsonResponse(
+                data={
+                    "results": [obj.attribute for obj in qs],
+                    "count": qs.count()
+                }
+            )
+
+        else:
+            return HttpResponse(status=500)
